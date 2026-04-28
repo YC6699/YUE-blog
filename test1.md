@@ -6,7 +6,6 @@
 ![名片效果](./images/screenshot1.png)
 ## 核心代码
 ```ts
-
 @Entry
 @Component
 struct  PersonTitle{
@@ -55,7 +54,6 @@ struct  PersonTitle{
         .offset({x:550,y:170})
   }
   }
-
 }
 ```
 ### 遇到的问题
