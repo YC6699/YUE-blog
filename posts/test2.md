@@ -48,6 +48,7 @@ import common from '@ohos.app.ability.common';
 ![名片效果](../images/screenshot21.png)
 ## 核心代码
 ```ts
+
 @Entry
 @Component
 struct  PersonTitle{
@@ -163,6 +164,7 @@ struct  PersonTitle{
 }
 }
 ```
+
 ### 学到的知识
 - 字体省略
 1. 设置规定的行数和组件大小 
