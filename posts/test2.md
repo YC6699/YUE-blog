@@ -33,101 +33,152 @@ import common from '@ohos.app.ability.common';
 ```
 #### 听AI用aboutToAppear + 窗口监听，但是调试时并没用，还引入生命周期的概念，感觉过度设计了，复杂，不是为布局适配设计做的
 ## 第二条路 ：getLastWindow/getWindowProperties + 响应式变化
-### 代码同上
+### 代码和第一条路相同，核心问题一样：只在页面创建时获取一次尺寸，旋转屏幕时不会更新
 #### 引入了window,common等模块，能跑但是太重，且只能在第一次时获得这个页面的大小，后面进行横屏转的时候，并不能再次获得新的screenwidth荷screenheight,它更适合不同的尺寸类型的设备，比如将这个页面在手机，平板，电脑上展示，会对组件起作用，响应式变化只能获得一次
-## 第三条路 ：onAreachange回调
-
-
-![名片效果](../images/screenshot1.png)
+## 第三条路 ：onAreaChange回调
+```ts
+ .onAreaChange((oldArea, newArea) => {
+      this.screenWidth = px2vp(newArea.width as number)
+      this.screenHeight = px2vp(newArea.height as number)
+    })
+```
+#### 用onAreaChange这次运行成功，并且代码整洁了很多，它可以监听组件因布局变化导致的尺寸，位置的改变，需要写在build（）内的最外面的容器上，onAreaChange接受两个参数，oldvalue和newvalue,它和position搭配最好用，虽然现在还不太懂它的底层机制，但知道它任何组件因布局变化导致的尺寸，位置的改变，onAreaChange都会被触发，这是横竖屏适配所需要的
+# 最后成果展示
+![名片效果](../images/screenshot2.png)
+![名片效果](../images/screenshot21.png)
 ## 核心代码
 ```ts
 @Entry
 @Component
 struct  PersonTitle{
+  @State name :string="表小可"
+  @State job : string="客户经理"
+  @State company : string="北京易创意科技有限公司"
+  @State location : string="北京市东城区王府井大街74号100006"
+  @State phone :  string="186 8888 8888"
+  @State tel :  string="010-1234 4321"
+  @State fax :  string="010-1101 2202"
+  @State email : string="name@company.com"
+  @State web : string="www.brand.com"
+  @State  screenWidth :number =0 //初始窗口宽度为0
+  @State screenHeight : number =0//初始窗口高度为0
+
   build() {
-    Stack({alignContent:Alignment.TopStart}) {
- //1.图片
-       Image($r('app.media.photo4'))
-         .width(150)
-         .height(100)
-         .offset({x:60,y:20})
- //2.红色方框
-      Row() {}
-      .height(30)
-      .width(50)
-      .backgroundColor(Color.Red)
-      .offset({x:10,y:150})
- //3.文字
-      Column({space:5}) {
-          Text('表小可')
-            .fontSize(30)
-            .fontWeight(700)
-          Text('客户经理')
-            .fontSize(20)
-    }
-      .offset({x:80,y:150})
-//4.基本信息
-      Column(){
-      Text('北京易创意科技有限公司')
-        .fontSize(30)
-        .fontWeight(700)
-        .fontColor(Color.Red)
-        Text('北京市东城区王府井大街74号100006\n' +
-          '手机:186 8888 8888\n' +
-          '电话:010-1234 4321\n' +
-          '传真:010-1101 2202\n' +
-          '邮箱:name@company.com\n' +
-          '网址:www.brand.com')
-          .fontSize(20)
-          .lineHeight(25)
+    Column() {//页面背景
+      Column(){//壳
+        Stack({ alignContent: Alignment.TopStart }) {//内容
+          //1.图片
+          Image($r('app.media.photo4'))
+            .width((this.screenWidth>this.screenHeight ? "20%":"25%"))//百分比竖屏自适应
+            .borderRadius("50%")
+            .aspectRatio(1)
+            .position({left:"5%", top:"5%" })
+          //2.红色方框
+          Row() {
+
+          }
+          .width(this.screenWidth>this.screenHeight ?"10%":"5%") //百分比竖屏自适应
+          .aspectRatio(1.7)
+          .backgroundColor(Color.Red)
+          .position({left:this.screenWidth>this.screenHeight ?'3%':'4%', top: this.screenWidth>this.screenHeight ? '50%':'50%' })
+//this.screenWidth>this.screenHeight   宽>高 横屏
+          //3.文字
+          Column({ space:"3%" }) {
+            Text(this.name)
+              .fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .fontWeight(700)
+              .width(200)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+            Blank(10)
+            Text(this.job)
+              .fontSize(this.screenWidth > this.screenHeight ? 15:8)
+              .width(200)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+          }
+          .position({left:'15%', top:'50%' })
+
+          //4.基本信息
+          Column({space:"3%"}) {
+            Text(this.company)
+              .width(300)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+              .fontSize(this.screenWidth > this.screenHeight ? 22:15)
+              .fontWeight(700)
+              .fontColor(Color.Red)
+            //优化lineHeight()适合一个Text内容多到用\n隔开换行使用
+            Text('地址：'+this.location).fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .width(350)
+              .maxLines(2)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+            Text('手机:'+this.phone).fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .width(300)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+            Text('电话:'+this.tel).fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .width(300)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+            Text('传真:'+this.fax).fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .width(300)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+            Text('邮箱:'+this.email).fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .width(300)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+            Text('网址:'+this.web).fontSize(this.screenWidth > this.screenHeight ? 22:10)
+              .width(300)
+              .maxLines(1)
+              .textOverflow({overflow:TextOverflow.Ellipsis})
+          }
+          .position({left:this.screenWidth>this.screenHeight ?'35%':'45%', top: '20%'})
+
+          //5.二维码
+          Image($r('app.media.qrcode'))
+            .width("18%")
+            .aspectRatio(1)
+            .position({left:this.screenWidth>this.screenHeight ? '83%':'85%', top:this.screenWidth>this.screenHeight ? '40%':'60%' })
+        }
+          .width("100%")
+          .height("100%")
+          .padding(10)
+          .borderRadius(16)
+          .backgroundColor("#f5f5f5")
       }
-      .offset({x:270,y:100})
- //5.二维码
-      Image($r('app.media.qrcode'))
-        .width(150)
-        .height(150)
-        .offset({x:550,y:170})
-  }
-  }
+      .width(this.screenWidth>this.screenHeight? "95%":"85%")//卡片占屏幕90%
+      .aspectRatio(1.6)//宽高比1.6：1
+      .shadow({radius:10,color: '#00000020',offsetX:0,offsetY:0})
+
+    }
+    .justifyContent(FlexAlign.Start)
+    .width("100%")
+    .height("100%")
+    .onAreaChange((oldArea, newArea) => {
+      this.screenWidth = px2vp(newArea.width as number)
+      this.screenHeight = px2vp(newArea.height as number)
+    })
+}
 }
 ```
-### 遇到的问题
-- 相关命名
-文件名：全小写 + 下划线
-组件名：大驼峰（每个单词首字母大写）
-- 图片展示 需保存在entry/src/main/resources/base/media  
-资源文件命名不支持中文、特殊字符，只允许：英文字母、数字、下划线。
-- Text()组件不能为空
-- justifyContent 属性影响上下子组件        justifyContent 是 Row/Column 容器的属性，会影响容器内所有子组件的对齐方式
-- 使用margin导致布局动来动去  
-采用offest加stack代替magin做偏移 offset 是纯视觉偏移，不参与布局计算，不会影响其他组件的位置   
- margin	✅ 会影响，会改变父容器和兄弟组件的位置 	做组件之间的间距、外边距  
- offset	❌ 不影响，仅做视觉偏移	做重叠、偏移、悬浮效果
-布局计算(margin)适合流态的app,而做固态的名片适合offset
-- offest坐标轴规则  
-元素直接放在 Stack 里	Stack 容器的左上角	整个画布的左上角是 (0,0)  
-元素放在 Row/Column 里	这个 Row/Column 容器的左上角	父容器的左上角是 (0,0)  
-可设置borderWidth(数字)边框线可视化帮助确定位置  
- 注意：：Stack + offset 来定位元素  
- Stack 的 alignContent: Alignment.Center 导致元素默认居中
-Stack 默认会把所有子组件居中摆放，再给每个组件加 offset，相当于 “先居中，再整体偏移”，就会和设计稿的位置错位  
-设置alignContent: Alignment.TopStart比较好
-- Stack 组件默认是 wrap_content（包裹内容）的大小，它的宽高是由里面最宽、最高的子组件决定的，不是全屏
-### 学到了什么
-- 换行操作  
- 1. Column() {内容}  
- 2. Blank() 自动撑开间距   
-  3. lineHeight(数字)  
-  注意：lineHeight 的数字 必须 ≥ 你的 fontSize  
-lineHeight = 行高
-fontSize = 文字本身高度  
-如果 lineHeight 小于 fontSize → 文字会被截断、重叠、显示异常
-必须 lineHeight ≥ fontSize
-- Column({ space: 5 })space对column内的所有组件都起作用
-- 使用stack{}+offest布局，margin和offset的适用场景
-- column(),row(),offset(),Text(),Image()相关组件和属性的使用
+### 学到的知识
+- 字体省略
+1. 设置规定的行数和组件大小 
+.maxline() .width() 
+2. 设置字体省略
+.textOverflow({overflow :TextOverflow.Ellipsis})
+- 图像变圆形 
+1. 先变成正方形 .aspectRatio(1) 
+2. borderRadius(宽度的一半)
+- 阴影使用
+1. .shadow({radius:10,color:'#00000020',offsetX:0,offsetY:4})
+2. 阴影要用在卡片上
+### 学习心得
+1. AI的建议要判断，多提问
+2. onAreaChange适用布局适配
+3. 时间会消耗热情，唯有坚持
 ### 下一步
-- 内容动态 ：把写死的数据改成@state   
-- 背景优化 : 加圆角和背景色  
-- 响应化格局 ：适应竖屏，横屏竖屏自动转换  
-- 图片适应 ：让图片在不同屏幕上显示
+- 学习看板建造
+- 基于health kit写一个健康看板app
