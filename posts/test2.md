@@ -172,18 +172,22 @@ struct  PersonTitle{
 
 ### 学到的知识
 - 字体省略
-  1. 设置规定的行数和组件大小 .maxLines() .width() 
-  2. 设置字体省略 .textOverflow({overflow :TextOverflow.Ellipsis})
-- 图像变圆形 
-  1. 先变成正方形 .aspectRatio(1) 
-  2. borderRadius(宽度的一半)
+  1. 设置规定的行数和组件大小：`.maxLines()`、`.width()`
+  2. 设置字体省略：`.textOverflow({overflow: TextOverflow.Ellipsis})`
+
+- 图像变圆形
+  1. 先变成正方形：`.aspectRatio(1)`
+  2. 圆角设置：`.borderRadius("50%")`
+
 - 阴影使用
-  1. .shadow({radius:10,color:'#00000020',offsetX:0,offsetY:4})
-  2. 阴影要用在卡片上
+  1. `.shadow({radius:10,color:'#00000020',offsetX:0,offsetY:4})`
+  2. 阴影要用在卡片容器上
+
 ### 学习心得
-  1. AI的建议要判断，多提问
-  2. onAreaChange适用布局适配
-  3. 时间会消耗热情，唯有坚持
+1. AI 的建议要判断，多提问
+2. onAreaChange 适用布局适配
+3. 时间会消耗热情，唯有坚持
+
 ### 下一步
 - 学习看板建造
-- 基于health kit写一个健康看板app
+- 基于 Health Kit 写一个健康看板 app
