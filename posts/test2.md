@@ -48,7 +48,6 @@ import common from '@ohos.app.ability.common';
 ![名片效果](../images/screenshot21.png)
 ## 核心代码
 ```ts
-
 @Entry
 @Component
 struct  PersonTitle{
