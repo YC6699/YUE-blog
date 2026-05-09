@@ -44,8 +44,11 @@ import common from '@ohos.app.ability.common';
 ```
 #### 用onAreaChange这次运行成功，并且代码整洁了很多，它可以监听组件因布局变化导致的尺寸，位置的改变，需要写在build（）内的最外面的容器上，onAreaChange接受两个参数，oldvalue和newvalue,它和position搭配最好用，虽然现在还不太懂它的底层机制，但知道它任何组件因布局变化导致的尺寸，位置的改变，onAreaChange都会被触发，这是横竖屏适配所需要的
 # 最后成果展示
+
 ![名片效果](../images/screenshot2.png)
+
 ![名片效果](../images/screenshot21.png)
+
 ## 核心代码
 ```ts
 @Entry
@@ -165,9 +168,10 @@ struct  PersonTitle{
 ```
 
 ### 学到的知识
+
 - 字体省略
 1. 设置规定的行数和组件大小 
-.maxline() .width() 
+.maxLines() .width() 
 2. 设置字体省略
 .textOverflow({overflow :TextOverflow.Ellipsis})
 - 图像变圆形 
@@ -177,9 +181,11 @@ struct  PersonTitle{
 1. .shadow({radius:10,color:'#00000020',offsetX:0,offsetY:4})
 2. 阴影要用在卡片上
 ### 学习心得
+
 1. AI的建议要判断，多提问
 2. onAreaChange适用布局适配
 3. 时间会消耗热情，唯有坚持
 ### 下一步
+
 - 学习看板建造
 - 基于health kit写一个健康看板app
