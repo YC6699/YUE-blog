@@ -181,9 +181,9 @@ struct  PersonTitle{
   1. .shadow({radius:10,color:'#00000020',offsetX:0,offsetY:4})
   2. 阴影要用在卡片上
 ### 学习心得
-1. AI的建议要判断，多提问
-2. onAreaChange适用布局适配
-3. 时间会消耗热情，唯有坚持
+  1. AI的建议要判断，多提问
+  2. onAreaChange适用布局适配
+  3. 时间会消耗热情，唯有坚持
 ### 下一步
 - 学习看板建造
 - 基于health kit写一个健康看板app
